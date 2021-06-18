@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-let {setData, getData} = require('../utils/cacheData');
+//let {setData, getData} = require('../utils/cacheData');
 
 
 exports.createPost = async (req, res) => {
@@ -65,13 +65,13 @@ exports.findPost = async (req, res) => {
           status: false,
           });
         }
-        let dataFound = await getData(id);
-        if(dataFound) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
+        // let dataFound = await getData(id);
+        // if(dataFound) {
+        //   return res.status(200).json({
+        //     status: 'From redis',
+        //     data: dataFound,
+        //   });
+        // }
         let post = await Post.findById(id).populate('user');
         if (!post) {
           return res.status(400).json({
@@ -79,7 +79,7 @@ exports.findPost = async (req, res) => {
               message: 'No Post found',
           });
         }
-        setData(post.id, post)
+        //setData(post.id, post)
         return res.status(200).json({
           status: 'Success',
           data: post,
@@ -136,13 +136,13 @@ exports.findPostOfUser = async (req, res) => {
           });
         }
 
-        let dataFound = await getData(key);
-        if(dataFound) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
+        // let dataFound = await getData(key);
+        // if(dataFound) {
+        //   return res.status(200).json({
+        //     status: 'From redis',
+        //     data: dataFound,
+        //   });
+        // }
 
         let post = await Post.find({user:id}).populate('user');
         if (!post) {
@@ -151,7 +151,7 @@ exports.findPostOfUser = async (req, res) => {
             message: 'No Post found',
           });
         }
-        setData(key, post)
+        //setData(key, post)
         return res.status(200).json({
           status: 'Success',
           data: post,

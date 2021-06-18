@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-let {setData, getData} = require('../utils/cacheData');
+//let {setData, getData} = require('../utils/cacheData');
 
 const User = require('../models/User');
 
@@ -85,14 +85,14 @@ exports.findUser = async (req, res) => {
           });
         }
       
-        let dataFound = await getData(id);
+        // let dataFound = await getData(id);
         
-        if(dataFound) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
+        // if(dataFound) {
+        //   return res.status(200).json({
+        //     status: 'From redis',
+        //     data: dataFound,
+        //   });
+        // }
         let user = await User.findById(id);
         if (!user) {
           return res.status(400).json({
@@ -100,7 +100,7 @@ exports.findUser = async (req, res) => {
               message: 'No User found',
           });
         }
-        setData(user.id, user)
+        //setData(user.id, user)
         return res.status(200).json({
             status: 'Success',
             data: user,

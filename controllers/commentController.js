@@ -1,5 +1,5 @@
 const Comment = require('../models/Comment');
-let {setData, getData} = require('../utils/cacheData');
+//let {setData, getData} = require('../utils/cacheData');
 
 exports.createComment = async (req, res) => {
     
@@ -59,13 +59,13 @@ exports.findComment = async (req, res) => {
             status: false,
             });
         }
-        let dataFound = await getData(id);
-        if(dataFound!=null) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
+        // let dataFound = await getData(id);
+        // if(dataFound!=null) {
+        //   return res.status(200).json({
+        //     status: 'From redis',
+        //     data: dataFound,
+        //   });
+        // }
 
         let comment = await Comment.findById(id).populate({
             path : 'post',
@@ -79,7 +79,7 @@ exports.findComment = async (req, res) => {
                 message: 'No Comment found',
             });
         }
-        setData(id, comment)
+        //setData(id, comment)
         return res.status(200).json({
             status: 'Success',
             data: comment,
@@ -134,13 +134,13 @@ exports.findCommentOfPost = async (req, res) => {
             status: false,
             });
         }
-        let dataFound = await getData(key);
-        if(dataFound!=null) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
+        // let dataFound = await getData(key);
+        // if(dataFound!=null) {
+        //   return res.status(200).json({
+        //     status: 'From redis',
+        //     data: dataFound,
+        //   });
+        // }
         let comment = await Comment.find({post:id}).populate({
             path : 'post',
             populate : {
@@ -153,7 +153,7 @@ exports.findCommentOfPost = async (req, res) => {
                 message: 'No Post found',
             });
         }
-        setData(key, comment)
+        //setData(key, comment)
         return res.status(200).json({
             status: 'Success',
             data: comment,

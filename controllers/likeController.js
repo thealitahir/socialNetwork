@@ -1,5 +1,5 @@
 const Like = require('../models/Like');
-let {setData, getData} = require('../utils/cacheData');
+//let {setData, getData} = require('../utils/cacheData');
 
 exports.createLike = async (req, res) => {
     
@@ -45,13 +45,13 @@ exports.findPostLikes = async (req, res) => {
         status: false,
         });
       }
-      let dataFound = await getData(key);
-      if(dataFound) {
-        return res.status(200).json({
-          status: 'From redis',
-          data: dataFound,
-        });
-      }
+      // let dataFound = await getData(key);
+      // if(dataFound) {
+      //   return res.status(200).json({
+      //     status: 'From redis',
+      //     data: dataFound,
+      //   });
+      // }
       let likes = await Like.find({postLike:id}).populate({
           path : 'postLike',
           populate : {
@@ -66,7 +66,7 @@ exports.findPostLikes = async (req, res) => {
       }
 
       let totalLikes = likes.length;
-      setData(key, likes)
+      //setData(key, likes)
       return res.status(200).json({
           status: 'Success',
           data: likes,
@@ -98,13 +98,13 @@ exports.findCommentsLikes = async (req, res) => {
         status: false,
         });
       }
-      let dataFound = await getData(key);
-      if(dataFound) {
-        return res.status(200).json({
-          status: 'From redis',
-          data: dataFound,
-        });
-      }
+      // let dataFound = await getData(key);
+      // if(dataFound) {
+      //   return res.status(200).json({
+      //     status: 'From redis',
+      //     data: dataFound,
+      //   });
+      // }
       let likes = await Like.find({commentLike:id}).populate({
           path : 'commentLike',
           populate : {
@@ -119,7 +119,7 @@ exports.findCommentsLikes = async (req, res) => {
       }
       
       let totalLikes = likes.length;
-      setData(key, likes)
+      //setData(key, likes)
       return res.status(200).json({
           status: 'Success',
           data: likes,
