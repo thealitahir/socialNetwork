@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 let {setData, getData} = require('../utils/cacheData');
 
-
 const User = require('../models/User');
 
 exports.signup = async (req, res) => {
@@ -85,7 +84,9 @@ exports.findUser = async (req, res) => {
           status: false,
           });
         }
+      
         let dataFound = await getData(id);
+        
         if(dataFound) {
           return res.status(200).json({
             status: 'From redis',

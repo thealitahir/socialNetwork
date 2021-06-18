@@ -1,15 +1,14 @@
 const redis = require('redis');
-
+const { promisify } = require('util');
 const REDIS_PORT = process.env.PORT || 6379;
-
 const client = redis.createClient(REDIS_PORT);
 const expirationTime = 3600;
 
-async function getData(key){
-    client.get(key,async (err, data) => {
-        result = await JSON.parse(data);
-    });
-    return result
+async function getData(key,req, res){
+    
+    const getAsync = promisify(client.get).bind(client);
+    const data = await getAsync(key);
+    return JSON.parse(data);
 }
 
 
