@@ -5,7 +5,7 @@ const client = redis.createClient(REDIS_PORT);
 const expirationTime = 3600;
 
 async function getData(key,req, res){
-    
+
     const getAsync = promisify(client.get).bind(client);
     const data = await getAsync(key);
     return JSON.parse(data);
