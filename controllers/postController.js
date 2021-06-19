@@ -245,3 +245,33 @@ exports.updateLikeOnComment = async (req, res) => {
     });
   }
 };
+
+exports.findAllPosts = async (req, res) => {
+  try {
+     
+      // let dataFound = await getData(id);
+      // if(dataFound) {
+      //   return res.status(200).json({
+      //     status: 'From redis',
+      //     data: dataFound,
+      //   });
+      // }
+      let posts = await Post.find().populate('user');
+      if (!posts) {
+        return res.status(400).json({
+            status: 'Fail',
+            message: 'No Posts found',
+        });
+      }
+      //setData(post.id, post)
+      return res.status(200).json({
+        status: 'Success',
+        data: posts,
+      });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+}
