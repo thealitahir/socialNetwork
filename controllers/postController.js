@@ -163,3 +163,85 @@ exports.findPostOfUser = async (req, res) => {
       });
     }
 };
+
+
+exports.postComment = async (req, res) => {
+  try {
+    let postId = req.params.postId;
+    let content = req.body.content;
+
+    let comment = {
+      content: content
+    };
+    
+    let updatedPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      { $push: { comments: comment } },
+      { new: true }
+    );
+
+      
+    return res.status(200).json({
+      status: 'Success',
+      data: updatedPost,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+};
+
+exports.deleteComment = async (req, res) => {
+  try {
+    let postId = req.params.postId;
+    let commentId = req.params.commentId;
+
+    let updatedPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      { $pull: { comments: { _id: commentId } } },
+      { new: true }
+    );
+      
+    return res.status(200).json({
+      status: 'Success',
+      data: updatedPost,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+};
+
+exports.updateLikeOnComment = async (req, res) => {
+  try {
+    let postId = req.params.postId;
+    let commentId = req.params.commentId;
+    let flag = req.params.flag;
+
+    console.log(postId, commentId)
+
+    let updatedPost = await Post.update(
+        { 
+          _id: postId,
+          'comments._id': commentId
+        },
+        {$set: {
+          'comments.$.like':  flag
+        }
+    })
+
+    return res.status(200).json({
+      status: 'Success',
+      data: updatedPost,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+};

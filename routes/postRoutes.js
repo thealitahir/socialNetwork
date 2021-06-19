@@ -3,8 +3,10 @@ const {
     createPost,
     findPost,
     updatePost,
-    findPostOfUser
-
+    findPostOfUser,
+    postComment,
+    deleteComment,
+    updateLikeOnComment
 } = require('../controllers/postController');
 const {cache} = require('../utils/cacheData')
 const router = express.Router();
@@ -13,6 +15,10 @@ router.route('/').post(createPost);
 router.route('/:postId').patch(updatePost);
 router.route('/:postId').get( findPost);
 router.route('/:userId/posts').get(findPostOfUser);
+router.route('/comment/:postId').patch(postComment);
+router.route('/comment/:postId/:commentId').patch(deleteComment);
+router.route('/comment/:postId/:commentId/:flag').patch(updateLikeOnComment);
+
 
 
 module.exports = router;

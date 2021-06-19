@@ -13,7 +13,22 @@ const postSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: [true, 'User data is required'],
-  }
+  },
+  like:{
+    type: Boolean,
+    default: false
+  },
+  comments:[
+    {
+      content: {
+        type: String
+      },
+      like:{
+        type: Boolean,
+        default: false
+      },
+    }
+  ]
   
 },{ timestamps: true });
 
