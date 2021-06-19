@@ -307,3 +307,27 @@ exports.findAllPosts = async (req, res) => {
     });
   }
 }
+
+exports.deletePost = async (req, res) => {
+  try {
+    const id = req.params.postId;
+    const post = await Post.findById(id);
+    if (!post) {
+      res.status(400).json({
+        status: 'Fail',
+        message: 'Post does not exist',
+      });
+    }
+
+    const result = await Post.findByIdAndDelete(id);
+    return res.status(200).json({
+      status: 'Successful',
+      message: 'Post delete successfully',
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: error,
+    });
+  }
+};
