@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-//let {setData, getData} = require('../utils/cacheData');
+let {setData, getData} = require('../utils/cacheData');
 
 
 exports.createPost = async (req, res) => {
@@ -49,47 +49,47 @@ exports.createPost = async (req, res) => {
 };
 
 exports.findPost = async (req, res) => {
-    try {
-        let id = req.params.postId;
+  try {
+    let id = req.params.postId;
 
-        let errors = [];
+    let errors = [];
 
-        if (!id) {
-            errors.push("Post ID");
-        }
+    if (!id) {
+        errors.push("Post ID");
+    }
 
-        if (errors.length > 0) {
-          errors = errors.join(",");
-          return res.json({
-          message: `These are required fields: ${errors}.`,
-          status: false,
-          });
-        }
-        // let dataFound = await getData(id);
-        // if(dataFound) {
-        //   return res.status(200).json({
-        //     status: 'From redis',
-        //     data: dataFound,
-        //   });
-        // }
-        let post = await Post.findById(id).populate('user');
-        if (!post) {
-          return res.status(400).json({
-              status: 'Fail',
-              message: 'No Post found',
-          });
-        }
-        //setData(post.id, post)
-        return res.status(200).json({
-          status: 'Success',
-          data: post,
-        });
-    } catch (err) {
-      return res.status(400).json({
-        status: 'Fail',
-        message: err,
+    if (errors.length > 0) {
+      errors = errors.join(",");
+      return res.json({
+      message: `These are required fields: ${errors}.`,
+      status: false,
       });
     }
+    let dataFound = await getData(id);
+    if(dataFound) {
+      return res.status(200).json({
+        status: 'From redis',
+        data: dataFound,
+      });
+    }
+    let post = await Post.findById(id).populate('user');
+    if (!post) {
+      return res.status(400).json({
+          status: 'Fail',
+          message: 'No Post found',
+      });
+    }
+    setData(post.id, post)
+    return res.status(200).json({
+      status: 'Success',
+      data: post,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
 }
 
 exports.updatePost = async (req, res) => {
@@ -118,50 +118,50 @@ exports.updatePost = async (req, res) => {
 };
 
 exports.findPostOfUser = async (req, res) => {
-    try {
-        let id = req.params.userId;
-        let key = id + 'postOfSpecficUser';
+  try {
+    let id = req.params.userId;
+    let key = id + 'postOfSpecficUser';
 
-        let errors = [];
+    let errors = [];
 
-        if (!id) {
-          errors.push("User ID");
-        }
-        
-        if (errors.length > 0) {
-          errors = errors.join(",");
-          return res.json({
-          message: `These are required fields: ${errors}.`,
-          status: false,
-          });
-        }
-
-        // let dataFound = await getData(key);
-        // if(dataFound) {
-        //   return res.status(200).json({
-        //     status: 'From redis',
-        //     data: dataFound,
-        //   });
-        // }
-
-        let post = await Post.find({user:id}).populate('user');
-        if (!post) {
-          return res.status(400).json({
-            status: 'Fail',
-            message: 'No Post found',
-          });
-        }
-        //setData(key, post)
-        return res.status(200).json({
-          status: 'Success',
-          data: post,
-        });
-    } catch (err) {
-      return res.status(400).json({
-          status: 'Fail',
-          message: err,
+    if (!id) {
+      errors.push("User ID");
+    }
+    
+    if (errors.length > 0) {
+      errors = errors.join(",");
+      return res.json({
+      message: `These are required fields: ${errors}.`,
+      status: false,
       });
     }
+
+    let dataFound = await getData(key);
+    if(dataFound) {
+      return res.status(200).json({
+        status: 'From redis',
+        data: dataFound,
+      });
+    }
+
+    let post = await Post.find({user:id}).populate('user');
+    if (!post) {
+      return res.status(400).json({
+        status: 'Fail',
+        message: 'No Post found',
+      });
+    }
+    setData(key, post)
+    return res.status(200).json({
+      status: 'Success',
+      data: post,
+    });
+  } catch (err) {
+    return res.status(400).json({
+        status: 'Fail',
+        message: err,
+    });
+  }
 };
 
 
@@ -222,8 +222,6 @@ exports.updateLikeOnComment = async (req, res) => {
     let commentId = req.params.commentId;
     let flag = req.params.flag;
 
-    console.log(postId, commentId)
-
     let updatedPost = await Post.update(
         { 
           _id: postId,
@@ -282,26 +280,26 @@ exports.updateContentOfComment = async (req, res) => {
 
 exports.findAllPosts = async (req, res) => {
   try {
-     
-      // let dataFound = await getData(id);
-      // if(dataFound) {
-      //   return res.status(200).json({
-      //     status: 'From redis',
-      //     data: dataFound,
-      //   });
-      // }
-      let posts = await Post.find().populate('user');
-      if (!posts) {
-        return res.status(400).json({
-            status: 'Fail',
-            message: 'No Posts found',
-        });
-      }
-      //setData(post.id, post)
+    let key = 'AllPosts'
+    let dataFound = await getData(key);
+    if(dataFound) {
       return res.status(200).json({
-        status: 'Success',
-        data: posts,
+        status: 'From redis',
+        data: dataFound,
       });
+    }
+    let posts = await Post.find().populate('user');
+    if (!posts) {
+      return res.status(400).json({
+          status: 'Fail',
+          message: 'No Posts found',
+      });
+    }
+    setData(key, posts)
+    return res.status(200).json({
+      status: 'Success',
+      data: posts,
+    });
   } catch (err) {
     return res.status(400).json({
       status: 'Fail',

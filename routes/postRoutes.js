@@ -11,7 +11,6 @@ const {
     updateContentOfComment,
     deletePost
 } = require('../controllers/postController');
-const {cache} = require('../utils/cacheData')
 const router = express.Router();
 
 router.route('/').post(createPost);
