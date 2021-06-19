@@ -229,10 +229,12 @@ exports.updateLikeOnComment = async (req, res) => {
           _id: postId,
           'comments._id': commentId
         },
-        {$set: {
+        { $set: {
           'comments.$.like':  flag
-        }
-    })
+        } 
+        },
+        { new: true}
+    )
 
     return res.status(200).json({
       status: 'Success',
