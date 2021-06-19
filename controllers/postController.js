@@ -246,6 +246,38 @@ exports.updateLikeOnComment = async (req, res) => {
   }
 };
 
+exports.updateContentOfComment = async (req, res) => {
+  try {
+
+    let postId = req.params.postId;
+    let commentId = req.params.commentId;
+    let content = req.body.content;
+
+
+    let updatedPost = await Post.update(
+        { 
+          _id: postId,
+          'comments._id': commentId
+        },
+        { $set: {
+          'comments.$.content':  content
+          }
+        },
+        { new: true}
+    )
+
+    return res.status(200).json({
+      status: 'Success',
+      data: updatedPost,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+};
+
 exports.findAllPosts = async (req, res) => {
   try {
      
