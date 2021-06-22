@@ -117,15 +117,14 @@ exports.updateUser = async (req, res) => {
     try {
       let updates = req.body;
   
-      const user = await User.findById(req.params.userId);
-      if (!user) {
+      const updatedUser = await User.findByIdAndUpdate(req.params.userId, updates, {new: true});
+
+      if (!updatedUser) {
         return res.status(400).json({
           status: 'Fail',
           message: 'User does not exist',
         });
       }
-  
-      const updatedUser = await User.findByIdAndUpdate(req.params.userId, updates, {new: true});
       return res.status(200).json({
         status: 'Success',
         data: updatedUser,

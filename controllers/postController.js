@@ -96,15 +96,13 @@ exports.updatePost = async (req, res) => {
     try {
       let updates = req.body;
   
-      const post = await Post.findById(req.params.postId);
-      if (!post) {
+      const updatedPost = await Post.findByIdAndUpdate(req.params.postId, updates, {new: true});
+      if (!updatedPost) {
         return res.status(400).json({
           status: 'Fail',
           message: 'Post does not exist',
         });
       }
-  
-      const updatedPost = await Post.findByIdAndUpdate(req.params.postId, updates, {new: true});
       return res.status(200).json({
         status: 'Success',
         data: updatedPost,
@@ -311,15 +309,14 @@ exports.findAllPosts = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const id = req.params.postId;
-    const post = await Post.findById(id);
-    if (!post) {
-      res.status(400).json({
+
+    const result = await Post.findByIdAndDelete(id);
+    if (!result) {
+      return res.status(400).json({
         status: 'Fail',
         message: 'Post does not exist',
       });
     }
-
-    const result = await Post.findByIdAndDelete(id);
     return res.status(200).json({
       status: 'Successful',
       message: 'Post delete successfully',
