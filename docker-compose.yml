@@ -9,6 +9,9 @@ services:
         links:
             - mongo
             - redis
+        environment: 
+            - REDIS_URL=redis://redis
+            - DB_URI=mongodb://mongo:27017/docker-node-mongo
     mongo:
         container_name: mongo
         image: mongo
@@ -16,4 +19,6 @@ services:
             - '27017:27017'
     redis:
         container_name: redis
-        image: 'redis:4.0.11'
+        image: redis
+        ports: 
+            - '6379:6379'

@@ -2,11 +2,9 @@ const mongoose = require("mongoose");
 const dotenv = require('dotenv');
 dotenv.config();
 
-const DB_URI = process.env.MONGO_URI;
-
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB_URI, {
+    await mongoose.connect(process.env.DB_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: true,
