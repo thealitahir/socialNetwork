@@ -1,7 +1,6 @@
 const redis = require('redis');
 const { promisify } = require('util');
-const REDIS_PORT = process.env.PORT || 6379;
-const client = redis.createClient(REDIS_PORT);
+const client = redis.createClient(process.env.REDIS_URL);
 const expirationTime = 3600;
 
 
