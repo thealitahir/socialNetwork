@@ -105,6 +105,8 @@ exports.updatePost = async (req, res) => {
         message: 'Post does not exist',
       });
     }
+    deletePostData('post', updatedPost.id);
+    setPostData('post', updatedPost.id, updatedPost);
     return res.status(200).json({
       status: 'Success',
       data: updatedPost,
@@ -179,7 +181,8 @@ exports.postComment = async (req, res) => {
       { $push: { comments: comment } },
       { new: true }
     );
-
+    deletePostData('post', updatedPost.id);
+    setPostData('post', updatedPost.id, updatedPost);
       
     return res.status(200).json({
       status: 'Success',
@@ -203,6 +206,8 @@ exports.deleteComment = async (req, res) => {
       { $pull: { comments: { _id: commentId } } },
       { new: true }
     );
+    deletePostData('post', updatedPost.id);
+    setPostData('post', updatedPost.id, updatedPost);
     return res.status(200).json({
       status: 'Success',
       data: updatedPost,
@@ -253,7 +258,7 @@ exports.updateContentOfComment = async (req, res) => {
     let content = req.body.content;
 
 
-    let updatedPost = await Post.update(
+    let updatedPost = await Post.findOneAndUpdate(
         { 
           _id: postId,
           'comments._id': commentId
@@ -263,8 +268,9 @@ exports.updateContentOfComment = async (req, res) => {
           }
         },
         { new: true}
-    )
-
+    );
+    deletePostData('post', updatedPost.id);
+    setPostData('post', updatedPost.id, updatedPost);
     return res.status(200).json({
       status: 'Success',
       data: updatedPost,
@@ -319,7 +325,7 @@ exports.deletePost = async (req, res) => {
       });
     }
     deletePostData('post', result.id)
-    
+
     return res.status(200).json({
       status: 'Successful',
       message: 'Post delete successfully',
