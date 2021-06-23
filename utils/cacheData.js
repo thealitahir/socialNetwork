@@ -4,26 +4,48 @@ const REDIS_PORT = process.env.PORT || 6379;
 const client = redis.createClient(REDIS_PORT);
 const expirationTime = 3600;
 
-async function getData(key,req, res){
 
-    const getAsync = promisify(client.get).bind(client);
-    const data = await getAsync(key);
+async function getPostData(key){
+
+    const getAsync = promisify(client.hget).bind(client);
+    const data = await getAsync('post',key);
     return JSON.parse(data);
 }
 
-function deleteData(key){
-    client.del(key, function(err, response) {
-        if (response == 1) {
-           console.log("Deleted Successfully!")
-        } else{
-         console.log("Cannot delete")
+function setPostData(feild, key, data){
+    client.hset(feild , key, JSON.stringify(data), function (err, response) {
+        if (err) {
+         console.log(err);
         }
     });
 }
 
-function setData(key,data){
-    client.setex(key, expirationTime, JSON.stringify(data));
+function deletePostData(feild, key){
+    client.hdel(feild , key, function (err, response) {
+        if (err) {
+         console.log(err);
+        }
+    });
 }
 
-module.exports = { setData, getData, deleteData };
+function setUserPostData(key,data){
+    let feild = key+'user';
+    client.hset( feild, JSON.stringify(data),'', function (err, response) {
+        if (err) {
+         console.log(err);
+        }
+    });
+}
+
+async function getUserPostData(key){
+    let feild = key+'user';
+    const getAsync = promisify(client.hgetall).bind(client);
+    const data = await getAsync(feild);
+    return data;
+}
+
+
+
+
+module.exports = { getPostData, setPostData, setUserPostData, getUserPostData, deletePostData };
 

@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-let {setData, getData, deleteData} = require('../utils/cacheData');
+let {setUserPostData, getUserPostData, setPostData, getPostData, deletePostData} = require('../utils/cacheData');
 
 
 exports.createPost = async (req, res) => {
@@ -34,7 +34,9 @@ exports.createPost = async (req, res) => {
     });
     
     await newPost.save();
-
+    setPostData('post', newPost.id, newPost);
+    setUserPostData(newPost.user, newPost);
+    
     return res.status(201).json({
       status: 'Success',
       data: newPost,
@@ -65,7 +67,7 @@ exports.findPost = async (req, res) => {
       status: false,
       });
     }
-    let dataFound = await getData(id);
+    let dataFound = await getPostData(id);
     if(dataFound) {
       return res.status(200).json({
         status: 'From redis',
@@ -79,7 +81,7 @@ exports.findPost = async (req, res) => {
           message: 'No Post found',
       });
     }
-    setData(post.id, post)
+    
     return res.status(200).json({
       status: 'Success',
       data: post,
@@ -134,11 +136,12 @@ exports.findPostOfUser = async (req, res) => {
       });
     }
 
-    let dataFound = await getData(key);
+    let dataFound = await getUserPostData(id);
+    var arrayOfObjects = Object.keys(dataFound)
     if(dataFound) {
       return res.status(200).json({
         status: 'From redis',
-        data: dataFound,
+        data:arrayOfObjects,
       });
     }
 
@@ -149,7 +152,6 @@ exports.findPostOfUser = async (req, res) => {
         message: 'No Post found',
       });
     }
-    setData(key, post)
     return res.status(200).json({
       status: 'Success',
       data: post,
@@ -201,7 +203,6 @@ exports.deleteComment = async (req, res) => {
       { $pull: { comments: { _id: commentId } } },
       { new: true }
     );
-      
     return res.status(200).json({
       status: 'Success',
       data: updatedPost,
@@ -317,8 +318,8 @@ exports.deletePost = async (req, res) => {
         message: 'Post does not exist',
       });
     }
-    console.log(result);
-    deleteData([id, result._id + 'postOfSpecficUser']);
+    deletePostData('post', result.id)
+    
     return res.status(200).json({
       status: 'Successful',
       message: 'Post delete successfully',
