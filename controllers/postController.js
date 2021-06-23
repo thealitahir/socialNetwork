@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-let {setData, getData} = require('../utils/cacheData');
+let {setData, getData, deleteData} = require('../utils/cacheData');
 
 
 exports.createPost = async (req, res) => {
@@ -93,26 +93,26 @@ exports.findPost = async (req, res) => {
 }
 
 exports.updatePost = async (req, res) => {
-    try {
-      let updates = req.body;
-  
-      const updatedPost = await Post.findByIdAndUpdate(req.params.postId, updates, {new: true});
-      if (!updatedPost) {
-        return res.status(400).json({
-          status: 'Fail',
-          message: 'Post does not exist',
-        });
-      }
-      return res.status(200).json({
-        status: 'Success',
-        data: updatedPost,
-      });
-    } catch (err) {
+  try {
+    let updates = req.body;
+
+    const updatedPost = await Post.findByIdAndUpdate(req.params.postId, updates, {new: true});
+    if (!updatedPost) {
       return res.status(400).json({
         status: 'Fail',
-        message: err,
+        message: 'Post does not exist',
       });
     }
+    return res.status(200).json({
+      status: 'Success',
+      data: updatedPost,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
 };
 
 exports.findPostOfUser = async (req, res) => {
@@ -129,8 +129,8 @@ exports.findPostOfUser = async (req, res) => {
     if (errors.length > 0) {
       errors = errors.join(",");
       return res.json({
-      message: `These are required fields: ${errors}.`,
-      status: false,
+        message: `These are required fields: ${errors}.`,
+        status: false,
       });
     }
 
@@ -317,6 +317,8 @@ exports.deletePost = async (req, res) => {
         message: 'Post does not exist',
       });
     }
+    console.log(result);
+    deleteData([id, result._id + 'postOfSpecficUser']);
     return res.status(200).json({
       status: 'Successful',
       message: 'Post delete successfully',

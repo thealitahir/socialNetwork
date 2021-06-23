@@ -8,7 +8,6 @@ exports.signup = async (req, res) => {
   try {
 
     const { firstName, lastName, email, password, userName } = req.body;
-
     let errors = [];
 
     if (!firstName) {
@@ -68,49 +67,49 @@ exports.signup = async (req, res) => {
 };
 
 exports.findUser = async (req, res) => {
-    try {
-        let id = req.params.userId;
+  try {
+    let id = req.params.userId;
 
-        let errors = [];
+    let errors = [];
 
-        if (!id) {
-            errors.push("User ID");
-        }
-        
-        if (errors.length > 0) {
-          errors = errors.join(",");
-          return res.json({
-          message: `These are required fields: ${errors}.`,
-          status: false,
-          });
-        }
-      
-        let dataFound = await getData(id);
-        
-        if(dataFound) {
-          return res.status(200).json({
-            status: 'From redis',
-            data: dataFound,
-          });
-        }
-        let user = await User.findById(id);
-        if (!user) {
-          return res.status(400).json({
-              status: 'Fail',
-              message: 'No User found',
-          });
-        }
-        setData(user.id, user)
-        return res.status(200).json({
-            status: 'Success',
-            data: user,
-        });
-    } catch (err) {
-      return res.status(400).json({
-          status: 'Fail',
-          message: err,
+    if (!id) {
+        errors.push("User ID");
+    }
+    
+    if (errors.length > 0) {
+      errors = errors.join(",");
+      return res.json({
+      message: `These are required fields: ${errors}.`,
+      status: false,
       });
     }
+  
+    let dataFound = await getData(id);
+    
+    if(dataFound) {
+      return res.status(200).json({
+        status: 'From redis',
+        data: dataFound,
+      });
+    }
+    let user = await User.findById(id);
+    if (!user) {
+      return res.status(400).json({
+          status: 'Fail',
+          message: 'No User found',
+      });
+    }
+    setData(user.id, user)
+    return res.status(200).json({
+        status: 'Success',
+        data: user,
+    });
+  } catch (err) {
+    return res.status(400).json({
+        status: 'Fail',
+        message: err,
+    });
+  }
 };
 
 exports.updateUser = async (req, res) => {

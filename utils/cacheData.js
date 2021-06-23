@@ -11,10 +11,19 @@ async function getData(key,req, res){
     return JSON.parse(data);
 }
 
+function deleteData(key){
+    client.del(key, function(err, response) {
+        if (response == 1) {
+           console.log("Deleted Successfully!")
+        } else{
+         console.log("Cannot delete")
+        }
+    });
+}
 
 function setData(key,data){
     client.setex(key, expirationTime, JSON.stringify(data));
 }
 
-module.exports = { setData, getData };
+module.exports = { setData, getData, deleteData };
 
