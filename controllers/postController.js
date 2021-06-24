@@ -286,7 +286,7 @@ exports.updateContentOfComment = async (req, res) => {
 exports.findAllPosts = async (req, res) => {
   try {
     let key = 'AllPosts'
-    let dataFound = await getData(key);
+    let dataFound = await getPostData(key);
     if(dataFound) {
       return res.status(200).json({
         status: 'From redis',
@@ -300,7 +300,7 @@ exports.findAllPosts = async (req, res) => {
           message: 'No Posts found',
       });
     }
-    setData(key, posts)
+    setPostData(key, posts)
     return res.status(200).json({
       status: 'Success',
       data: posts,
