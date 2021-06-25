@@ -226,7 +226,7 @@ exports.updateLikeOnComment = async (req, res) => {
     let commentId = req.params.commentId;
     let flag = req.params.flag;
 
-    let updatedPost = await Post.update(
+    let updatedPost = await Post.findOneAndUpdate(
         { 
           _id: postId,
           'comments._id': commentId
@@ -237,7 +237,8 @@ exports.updateLikeOnComment = async (req, res) => {
         },
         { new: true}
     )
-
+    deletePostData('post', updatedPost.id);
+    setPostData('post', updatedPost.id, updatedPost);
     return res.status(200).json({
       status: 'Success',
       data: updatedPost,
