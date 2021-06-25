@@ -11,6 +11,11 @@ async function getPostData(key){
     return JSON.parse(data);
 }
 
+async function getAllPostData(){
+    const getAsync = promisify(client.hgetall).bind(client);
+    const data = await getAsync("post");
+    return data;
+}
 
 function deletePostData(feild, key){
     client.hdel(feild , key, function (err, response) {
@@ -30,35 +35,23 @@ function deleteUserPostData(feild, key){
 }
 
 function setPostData(feild, key, data){
-    //console.log(feild, key, data)
+    
     client.hset(feild , key, JSON.stringify(data), function (err, response) {
         if (err) {
          console.log(err);
         }
-        console.log(response);
     });
 }
 
-function setUserPostData(feild, key,data){
-    feild = feild+'user';
-    console.log(typeof feild, key, data)
-    client.hset(feild , key, JSON.stringify(data), function (err, response) {
+
+function setUserPostData(key,data){
+    let feild = key+'user';
+    client.hset( feild, JSON.stringify(data),'', function (err, response) {
         if (err) {
          console.log(err);
         }
-        console.log(response);
     });
 }
-
-
-// function setUserPostData(key,data){
-//     let feild = key+'user';
-//     client.hset( feild, JSON.stringify(data),'', function (err, response) {
-//         if (err) {
-//          console.log(err);
-//         }
-//     });
-// }
 
 async function getUserPostData(key){
     let feild = key+'user';
@@ -70,5 +63,5 @@ async function getUserPostData(key){
 
 
 
-module.exports = { getPostData, setPostData, setUserPostData, getUserPostData, deletePostData, deleteUserPostData };
+module.exports = { getPostData, getAllPostData, setPostData, setUserPostData, getUserPostData, deletePostData, deleteUserPostData };
 

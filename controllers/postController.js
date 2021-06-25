@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-let {setUserPostData, getUserPostData, setPostData, getPostData, deletePostData, deleteUserPostData} = require('../utils/cacheData');
+let {setUserPostData, getUserPostData, setPostData, getPostData, deletePostData, getAllPostData} = require('../utils/cacheData');
 
 
 exports.createPost = async (req, res) => {
@@ -35,8 +35,8 @@ exports.createPost = async (req, res) => {
     
     await newPost.save();
     
-    //setPostData('post', newPost.id, newPost);
-    setUserPostData(newPost.user, newPost.id, newPost);
+    setPostData('post', newPost.id, newPost);
+    setUserPostData(newPost.user, newPost);
     
     return res.status(201).json({
       status: 'Success',
@@ -285,7 +285,6 @@ exports.updateContentOfComment = async (req, res) => {
 
 exports.findAllPosts = async (req, res) => {
   try {
-    let key = 'AllPosts'
     
     let posts = await Post.find().populate('user');
     if (!posts) {
@@ -294,7 +293,13 @@ exports.findAllPosts = async (req, res) => {
           message: 'No Posts found',
       });
     }
-    
+    let dataFound = await getAllPostData();
+    if(dataFound) {
+      return res.status(200).json({
+        status: 'From redis',
+        data: dataFound,
+      });
+    }
     return res.status(200).json({
       status: 'Success',
       data: posts,
